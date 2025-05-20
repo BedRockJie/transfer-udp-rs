@@ -1,0 +1,13 @@
+[package]
+name = "udp-core"
+version = "0.1.0"
+edition = "2024"
+
+description = "communication library with send/receive and listening capabilities"
+authors = ["Bedrock"]
+
+[dependencies]
+
+
+[lib]
+path = "src/lib.rs"

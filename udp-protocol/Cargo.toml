@@ -1,0 +1,9 @@
+[package]
+name = "udp-protocol"
+version = "0.1.0"
+edition = "2024"
+
+description = "UDP protocol stack implementation"
+authors = ["Bedrock"]
+
+[dependencies]
