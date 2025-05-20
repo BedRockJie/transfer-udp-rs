@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "udp-core",
+    "udp-protocol",
+    "transfer-rs",
+]
+
+resolver = "3"
