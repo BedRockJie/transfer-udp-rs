@@ -8,7 +8,7 @@ const PORT_RANGE_START: u16 = 58052;
 const PORT_RANGE_END: u16 = 58080;
 
 pub struct UdpClient {
-    socket: UdpSocket,
+    pub socket: UdpSocket,
 }
 
 impl UdpClient {
@@ -51,7 +51,7 @@ impl UdpClient {
 }
 
 pub struct UdpServer {
-    socket: UdpSocket,
+    pub socket: UdpSocket,
 }
 
 impl UdpServer {

@@ -3,7 +3,7 @@
 members = [
     "udp-core",
     "udp-protocol",
-    "transfer-rs",
+    "transfer-rs", "udp-loop",
 ]
 
 resolver = "3"
