@@ -3,6 +3,7 @@ use clap::Parser;
 use std::net::SocketAddr;
 use std::time::{Duration, Instant};
 use rand::{RngCore, rngs::OsRng};
+// use hex::encode;
 
 /// 命令行参数解析
 #[derive(Parser, Debug)]
@@ -49,6 +50,7 @@ fn main() -> std::io::Result<()> {
         match client.send_and_receive(target, &data, Duration::from_secs(1)) {
             Ok(resp) => {
                 if resp != data {
+                    // println!("send:{} recv:{}", encode(&data), encode(&resp));
                     error_count += 1;
                     if !args.ignore_errors {
                         eprintln!("数据校验错误");

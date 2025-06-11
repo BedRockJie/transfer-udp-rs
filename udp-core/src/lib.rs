@@ -32,7 +32,7 @@ impl UdpClient {
         // 设置接收超时
         self.socket.set_read_timeout(Some(timeout))?;
 
-        let mut buf = vec![0; 1024];
+        let mut buf = vec![0; 8192];
         let (num_bytes, _) = self.socket.recv_from(&mut buf)?;
         buf.truncate(num_bytes);
         Ok(buf)
@@ -71,10 +71,11 @@ impl UdpServer {
 
         // 启动接收线程
         thread::spawn(move || {
-            let mut buf = vec![0; 1024];
+            let mut buf = vec![0; 8192];
             loop {
                 match socket_clone.recv_from(&mut buf) {
                     Ok((num_bytes, src_addr)) => {
+                        // println!("Received {} bytes from {}", num_bytes, src_addr);
                         let data = &buf[..num_bytes];
                         tx.send((src_addr, data.to_vec())).unwrap();
                     }

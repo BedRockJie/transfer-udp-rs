@@ -7,3 +7,4 @@ edition = "2024"
 udp-core = {path = "../udp-core"}
 rand = { version = "0.8" }
 clap = {version = "4", features = ["derive"]}
+hex = "0.4"
