@@ -582,6 +582,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "udp-loop-server"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "rand",
+ "udp-core",
+]
+
+[[package]]
 name = "udp-protocol"
 version = "0.1.0"
 dependencies = [

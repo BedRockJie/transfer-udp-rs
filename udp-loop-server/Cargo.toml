@@ -1,0 +1,9 @@
+[package]
+name = "udp-loop-server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+udp-core = {path = "../udp-core"}
+rand = { version = "0.8" }
+clap = {version = "4", features = ["derive"]}
