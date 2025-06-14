@@ -589,6 +589,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "udp-loop-mthread"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "hex",
+ "rand",
+ "udp-core",
+]
+
+[[package]]
 name = "udp-loop-server"
 version = "0.1.0"
 dependencies = [
