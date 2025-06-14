@@ -71,6 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write  # 允许上传文件
+      pull-requests: read  # 允许读取pull request
     steps:
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
@@ -84,12 +85,25 @@ jobs:
         id: get_tag
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+      - name: Generate changelog
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # 使用 GitHub 自动生成的 token
+          release-type: rust
+          monorepo-tags: true  # 关键：启用 monorepo tag 模式
+          packages: |
+            udp-loop
+            udp-loop-server
+            udp-loop-mthread
+            transfer-rs
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.get_tag.outputs.tag }}
-          name: Release ${{ steps.get_tag.outputs.tag }}
-          body: "Automated release for ${{ steps.get_tag.outputs.tag }}"
+          tag_name: ${{ steps.release.outputs.tag_name }}
+          name: ${{ steps.release.outputs.release_name }}
+          body: ${{ steps.release.outputs.body }}
           draft: false
           prerelease: false
           files: |
