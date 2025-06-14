@@ -1,0 +1,20 @@
+{
+  "packages": {
+    "udp-loop": {
+      "path": "udp-loop",
+      "release-type": "rust"
+    },
+    "udp-loop-server": {
+      "path": "udp-loop-server",
+      "release-type": "rust"
+    },
+    "udp-loop-mthread": {
+      "path": "udp-loop-mthread",
+      "release-type": "rust"
+    },
+    "transfer-rs": {
+      "path": "transfer-rs",
+      "release-type": "rust"
+    }
+  }
+}
