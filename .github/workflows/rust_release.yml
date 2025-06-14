@@ -1,35 +1,97 @@
-name: Build & Test Rust Project on Tag
+name: Rust Release (Cross-platform, Tag Trigger)
 
 on:
   push:
     tags:
-      - "*"   # 匹配所有 tag
+      - "*"   # 任何tag都会触发
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
-  build-test-release:
-    runs-on: ubuntu-latest
+  build:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: actions/setup-rust@v1
-        with:
-          rust-version: stable
-
-      - name: Build (debug)
-        run: cargo build --verbose
-
-      - name: Run tests
-        run: cargo test --verbose
-
-      - name: Build release binary
+      - name: Build Release
         run: cargo build --release --verbose
 
-      - name: Upload Release Binary
+      - name: Run tests
+        run: cargo test --release --verbose
+
+      - name: Install all binaries
+        shell: bash
+        run: |
+          mkdir -p dist/bin
+          # 定义需要安装的二进制 crates
+          BINARY_CRATES=(
+            "udp-loop"
+            "udp-loop-server"
+            "udp-loop-mthread"
+            "transfer-rs"
+          )
+          
+          # 为每个二进制 crate 执行 install
+          for crate in "${BINARY_CRATES[@]}"; do
+            cargo install --path "$crate" --root dist --locked --verbose
+          done
+          
+          ls -lah dist/bin
+
+      - name: Package binaries (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          tar czvf transfer-rs-${{ matrix.os }}.tar.gz -C dist .
+          ls -lah
+
+      - name: Package binaries (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          7z a transfer-rs-${{ matrix.os }}.zip .\dist\*
+          dir
+
+      - name: Upload Release Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-binaries
-          path: target/release/
+          name: ${{ matrix.os }}-release
+          path: |
+            transfer-rs-${{ matrix.os }}.*
           if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允许上传文件
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: ls -R artifacts
+
+      - name: Get tag name
+        id: get_tag
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          name: Release ${{ steps.get_tag.outputs.tag }}
+          body: "Automated release for ${{ steps.get_tag.outputs.tag }}"
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/**/*.zip
+            artifacts/**/*.tar.gz
